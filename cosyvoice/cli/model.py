@@ -99,6 +99,14 @@ class CosyVoiceModel:
                                       prompt_feat=prompt_feat.to(self.device),
                                       prompt_feat_len=torch.tensor([prompt_feat.shape[1]], dtype=torch.int32).to(self.device),
                                       embedding=embedding.to(self.device))
+        # 将 tts_mel 切换到 CPU 上
+        tts_mel = tts_mel.to('cpu')
+        
+        # 确保 self.hift 在 CPU 上运行
+        self.hift.to('cpu')
+        
+        # 执行推理
+        tts_speech = self.hift.inference(mel=tts_mel).cpu()
         # mel overlap fade in out
         if self.mel_overlap_dict[uuid] is not None:
             tts_mel = fade_in_out(tts_mel, self.mel_overlap_dict[uuid], self.mel_window)
@@ -232,7 +240,7 @@ class CosyVoiceModel:
                                              uuid=this_uuid,
                                              finalize=True,
                                              speed=speed)
-            yield {'tts_speech': this_tts_speech.cpu()}
+
         with self.lock:
             self.tts_speech_token_dict.pop(this_uuid)
             self.llm_end_dict.pop(this_uuid)

@@ -17,6 +17,15 @@ import argparse
 import gradio as gr
 import numpy as np
 import torch
+import torch
+try:
+    import intel_extension_for_pytorch as ipex
+    if torch.xpu.is_available():
+        from ipex_to_cuda import ipex_init
+        ipex_active, message = ipex_init()
+        print(f"IPEX Active: {ipex_active} Message: {message}")
+except Exception:
+    pass
 import torchaudio
 import random
 import librosa
