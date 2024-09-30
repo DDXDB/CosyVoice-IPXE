@@ -240,7 +240,7 @@ class CosyVoiceModel:
                                              uuid=this_uuid,
                                              finalize=True,
                                              speed=speed)
-
+            yield {'tts_speech': this_tts_speech.cpu()}
         with self.lock:
             self.tts_speech_token_dict.pop(this_uuid)
             self.llm_end_dict.pop(this_uuid)
